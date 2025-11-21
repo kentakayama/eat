@@ -40,7 +40,7 @@ const (
 )
 
 // ueid-type = bstr .size (7..33)
-type UEID []byte
+type UEID B64Url
 
 func (u UEID) Validate() error {
 	if len(u) == 0 {
