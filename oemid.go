@@ -4,7 +4,6 @@
 package eat
 
 import (
-	"encoding/base64"
 	"encoding/json"
 	"fmt"
 )
@@ -23,7 +22,7 @@ type OEMID struct {
 
 func (o OEMID) Valid() bool {
 	switch v := o.Value.(type) {
-	case []byte:
+	case B64Url:
 		t := v
 		return len(t) == 3 || len(t) == 16
 	case int:
@@ -37,11 +36,9 @@ func (o OEMID) MarshalJSON() ([]byte, error) {
 	if !o.Valid() {
 		return nil, fmt.Errorf("invalid value %#v", o.Value)
 	}
-	switch v := o.Value.(type) {
-	case []byte:
-		return json.Marshal(
-			base64.RawURLEncoding.EncodeToString(v),
-		)
+	switch o.Value.(type) {
+	case B64Url:
+		return json.Marshal(o.Value)
 	case int:
 		return json.Marshal(o.Value)
 	default:
@@ -56,17 +53,12 @@ func (o *OEMID) UnmarshalJSON(data []byte) error {
 		return nil
 	}
 
-	var s string
+	var s B64Url
 	if err := json.Unmarshal(data, &s); err == nil {
-		// must be base64url string
-		value, err := base64.RawURLEncoding.DecodeString(s)
-		if err != nil {
-			return fmt.Errorf("%s", err.Error())
-		}
-		if len(value) != 3 && len(value) != 16 {
+		if len(s) != 3 && len(s) != 16 {
 			return fmt.Errorf("%v is neither oemid-ieee nor oemid-random", data)
 		}
-		o.Value = value
+		o.Value = s
 		return nil
 	}
 
@@ -78,7 +70,7 @@ func (o OEMID) MarshalCBOR() ([]byte, error) {
 		return nil, fmt.Errorf("invalid value %#v", o.Value)
 	}
 	switch o.Value.(type) {
-	case []byte:
+	case B64Url:
 		return em.Marshal(o.Value)
 	case int:
 		return em.Marshal(o.Value)
@@ -94,7 +86,7 @@ func (o *OEMID) UnmarshalCBOR(data []byte) error {
 		return nil
 	}
 
-	var b []byte
+	var b B64Url
 	if err := dm.Unmarshal(data, &b); err == nil {
 		if len(b) != 3 && len(b) != 16 {
 			return fmt.Errorf("%v is neither oemid-ieee nor oemid-random", data)
