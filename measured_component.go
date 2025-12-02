@@ -22,6 +22,13 @@ type ComponentID struct {
 	Version *Version `cbor:"1,keyasint,omitempty"`
 }
 
+func (c ComponentID) MarshalJSON() ([]byte, error) {
+	if c.Version == nil {
+		return json.Marshal([]string{c.Name})
+	}
+	return json.Marshal([2]interface{}{c.Name, c.Version})
+}
+
 func (c *ComponentID) UnmarshalJSON(data []byte) error {
 	var tmp []json.RawMessage
 	if err := json.Unmarshal(data, &tmp); err != nil {
@@ -42,13 +49,6 @@ func (c *ComponentID) UnmarshalJSON(data []byte) error {
 	}
 
 	return nil
-}
-
-func (c ComponentID) MarshalJSON() ([]byte, error) {
-	if c.Version == nil {
-		return json.Marshal([]string{c.Name})
-	}
-	return json.Marshal([2]interface{}{c.Name, c.Version})
 }
 
 // Based on https://github.com/veraison/swid
