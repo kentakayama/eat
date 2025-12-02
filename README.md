@@ -29,8 +29,8 @@ swname | 270 | ✅
 swversion | 271 | ✅
 manifests | 272 | ⚠️ (see [Supported Type for Manifests and Measurements](#supported-type-for-manifests-and-measurements))
 measurements | 273 | ⚠️ (see [Supported Type for Manifests and Measurements](#supported-type-for-manifests-and-measurements))
-measres | 274 | :x:
-intuse | 275 | :x:
+measres | 274 | ✅
+intuse | 275 | ✅
 
 ## Supported CWT Features
 
