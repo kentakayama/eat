@@ -6,7 +6,6 @@ package eat
 import (
 	"testing"
 
-	cbor "github.com/fxamacker/cbor/v2"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -36,7 +35,7 @@ func TestMeasurement_CBORMarshal_OK(t *testing.T) {
 
 func TestMeasurement_CBORUnmarshal_OK(t *testing.T) {
 	var m Measurement
-	assert.Nil(t, cbor.Unmarshal(encodedMeasurement, &m))
+	assert.Nil(t, dm.Unmarshal(encodedMeasurement, &m))
 	assert.NotNil(t, m)
 	assert.Equal(t, measurementType, m.Type)
 	assert.Equal(t, measurementFormat, m.Format)

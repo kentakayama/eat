@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"testing"
 
-	cbor "github.com/fxamacker/cbor/v2"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -44,7 +43,7 @@ func TestDigest_MarshalCBOR_OK(t *testing.T) {
 	assert.Equal(t, 1, digest.Alg)
 	assert.Equal(t, expectedHashValue, digest.Val)
 
-	encoded, err := cbor.Marshal(digest)
+	encoded, err := em.Marshal(digest)
 	assert.Nil(t, err)
 	assert.Equal(t, data, encoded)
 }
@@ -91,7 +90,7 @@ func TestMeasuredComponent_MarshalCBOR_OK(t *testing.T) {
 	assert.Equal(t, 1, mc.Measurement.Alg)
 	assert.Equal(t, expectedHashValue, mc.Measurement.Val)
 
-	encoded, err := cbor.Marshal(mc)
+	encoded, err := em.Marshal(mc)
 	assert.Nil(t, err)
 	assert.Equal(t, data, encoded)
 }
