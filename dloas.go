@@ -17,6 +17,7 @@ type Dloa struct {
 	ApplicationLabel *string
 }
 
+//nolint:gocritic
 func (d Dloa) MarshalJSON() ([]byte, error) {
 	tmp := []interface{}{d.Registrar.String(), d.PlatformLabel}
 	if d.ApplicationLabel != nil {
@@ -25,6 +26,7 @@ func (d Dloa) MarshalJSON() ([]byte, error) {
 	return json.Marshal(tmp)
 }
 
+//nolint:dupl
 func (d *Dloa) UnmarshalJSON(data []byte) error {
 	var tmp []json.RawMessage
 	if err := json.Unmarshal(data, &tmp); err != nil {
@@ -59,6 +61,7 @@ func (d *Dloa) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+//nolint:gocritic
 func (d Dloa) MarshalCBOR() ([]byte, error) {
 	tmp := []interface{}{d.Registrar.String(), d.PlatformLabel}
 	if d.ApplicationLabel != nil {
@@ -67,6 +70,7 @@ func (d Dloa) MarshalCBOR() ([]byte, error) {
 	return em.Marshal(tmp)
 }
 
+//nolint:dupl
 func (d *Dloa) UnmarshalCBOR(data []byte) error {
 	var tmp []cbor.RawMessage
 	if err := dm.Unmarshal(data, &tmp); err != nil {
