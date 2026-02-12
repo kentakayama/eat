@@ -130,3 +130,39 @@ func TestUEID_JSONUnmarshal_NG(t *testing.T) {
 	err = json.Unmarshal(s3, &u3)
 	assert.NotNil(t, err)
 }
+
+func TestUEID_String_OK(t *testing.T) {
+	u1 := UEID{
+		0x01, // RAND
+		0xde, 0xad, 0xbe, 0xef, 0xde, 0xad, 0xbe, 0xef,
+		0xde, 0xad, 0xbe, 0xef, 0xde, 0xad, 0xbe, 0xef, // 16 bytes
+	}
+	s1, err := u1.String()
+	assert.Nil(t, err)
+	assert.Equal(t, "/ RAND (h'01') / h'deadbeefdeadbeefdeadbeefdeadbeef'", s1)
+
+	u2 := UEID{
+		0x02,                               // EUI
+		0xde, 0xad, 0xbe, 0xef, 0xde, 0xad, // 6 bytes
+	}
+	s2, err := u2.String()
+	assert.Nil(t, err)
+	assert.Equal(t, "/ EUI (h'02') / h'deadbeefdead'", s2)
+
+	u3 := UEID{
+		0x03, // IMEI
+		0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37,
+		0x38, 0x39, 0x30, 0x31, 0x32, 0x33, 0x34, // "12345678901234"
+	}
+	s3, err := u3.String()
+	assert.Nil(t, err)
+	assert.Equal(t, "/ IMEI (h'03') / '12345678901234'", s3)
+
+	u4 := UEID{
+		0xFF, // Invalid
+		0xde, 0xad, 0xbe, 0xef, 0xde, 0xad, 0xbe, 0xef,
+	}
+	s4, err := u4.String()
+	assert.EqualError(t, err, "invalid UEID: invalid UEID type 255")
+	assert.Equal(t, "", s4)
+}
