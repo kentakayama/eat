@@ -5,8 +5,11 @@ package eat
 
 import (
 	"encoding/base64"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	"unicode"
+	"unicode/utf8"
 )
 
 const (
@@ -106,4 +109,45 @@ func (u *UEID) UnmarshalJSON(data []byte) error {
 	}
 	*u = value
 	return nil
+}
+
+func (u UEID) String() (string, error) {
+	if err := u.Validate(); err != nil {
+		return "", fmt.Errorf("invalid UEID: %v", err)
+	}
+
+	typ := u[0]
+	value := string(u[1:])
+	var valueStr string
+	if utf8.ValidString(value) && isPrintableUTF8([]byte(value)) {
+		valueStr = fmt.Sprintf("'%s'", value)
+	} else {
+		// otherwise, represent with hex string => h'1234abcd'
+		valueStr = fmt.Sprintf("h'%s'", hex.EncodeToString([]byte(value)))
+	}
+
+	switch typ {
+	case UEIDTypeRAND:
+		return fmt.Sprintf("/ RAND (h'01') / %s", valueStr), nil
+	case UEIDTypeEUI:
+		return fmt.Sprintf("/ EUI (h'02') / %s", valueStr), nil
+	case UEIDTypeIMEI:
+		return fmt.Sprintf("/ IMEI (h'03') / %s", valueStr), nil
+	default:
+		return "", fmt.Errorf("invalid UEID type %v", typ)
+	}
+}
+
+func isPrintableUTF8(b []byte) bool {
+	for len(b) > 0 {
+		r, size := utf8.DecodeRune(b)
+		if r == utf8.RuneError && size == 1 {
+			return false // invalid rune
+		}
+		if !unicode.IsPrint(r) {
+			return false // non-printable rune
+		}
+		b = b[size:]
+	}
+	return true
 }
