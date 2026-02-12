@@ -111,9 +111,9 @@ func (u *UEID) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (u UEID) String() (string, error) {
+func (u UEID) String() string {
 	if err := u.Validate(); err != nil {
-		return "", fmt.Errorf("invalid UEID: %v", err)
+		return "/ invalid UEID /"
 	}
 
 	typ := u[0]
@@ -128,13 +128,13 @@ func (u UEID) String() (string, error) {
 
 	switch typ {
 	case UEIDTypeRAND:
-		return fmt.Sprintf("/ RAND (h'01') / %s", valueStr), nil
+		return fmt.Sprintf("/ RAND (h'01') / %s", valueStr)
 	case UEIDTypeEUI:
-		return fmt.Sprintf("/ EUI (h'02') / %s", valueStr), nil
+		return fmt.Sprintf("/ EUI (h'02') / %s", valueStr)
 	case UEIDTypeIMEI:
-		return fmt.Sprintf("/ IMEI (h'03') / %s", valueStr), nil
+		return fmt.Sprintf("/ IMEI (h'03') / %s", valueStr)
 	default:
-		return "", fmt.Errorf("invalid UEID type %v", typ)
+		return "/ invalid UEID /"
 	}
 }
 
